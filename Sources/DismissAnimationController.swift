@@ -36,9 +36,9 @@ public final class DismissAnimationController: NSObject, UIViewControllerAnimate
     
     private(set) var destinationFrame: CGRect!
     
-    private(set) var initialTransitionView: UIView!
+    private(set) var initialTransitionView: UIView?
     
-    private(set) var destinationTransitionView: UIView!
+    private(set) var destinationTransitionView: UIView?
 
     // MARK: Transition
     
@@ -82,12 +82,12 @@ public final class DismissAnimationController: NSObject, UIViewControllerAnimate
         
         // Create Snapshot from Destination View
         self.destinationTransitionView = UIImageView(image: destinationView.snapshotImage())
-        self.destinationTransitionView.clipsToBounds = true
-        self.destinationTransitionView.contentMode = .ScaleAspectFill
+        self.destinationTransitionView!.clipsToBounds = true
+        self.destinationTransitionView!.contentMode = .ScaleAspectFill
         
         self.initialTransitionView = UIImageView(image: initialView.snapshotImage())
-        self.initialTransitionView.clipsToBounds = true
-        self.initialTransitionView.contentMode = .ScaleAspectFill
+        self.initialTransitionView!.clipsToBounds = true
+        self.initialTransitionView!.contentMode = .ScaleAspectFill
                 
         // Hide Transisioning Views
         initialView.hidden = true
@@ -106,12 +106,12 @@ public final class DismissAnimationController: NSObject, UIViewControllerAnimate
         }
         
         // Add Snapshot
-        self.destinationTransitionView.frame = destinationFrame
-        containerView.addSubview(self.destinationTransitionView)
+        self.destinationTransitionView!.frame = destinationFrame
+        containerView.addSubview(self.destinationTransitionView!)
         
-        self.initialTransitionView.frame = destinationFrame
-        containerView.addSubview(self.initialTransitionView)
-        self.initialTransitionView.alpha = 0.0
+        self.initialTransitionView!.frame = destinationFrame
+        containerView.addSubview(self.initialTransitionView!)
+        self.initialTransitionView!.alpha = 0.0
         
         // Animation
         let duration: NSTimeInterval = transitionDuration(transitionContext)
@@ -128,15 +128,15 @@ public final class DismissAnimationController: NSObject, UIViewControllerAnimate
             
             UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: self.usingSpringWithDamping, initialSpringVelocity: self.initialSpringVelocity, options: self.animationOptions, animations: {
                 
-                self.destinationTransitionView.frame = self.initialFrame
-                self.initialTransitionView.frame = self.initialFrame
-                self.initialTransitionView.alpha = 1.0
+                self.destinationTransitionView!.frame = self.initialFrame
+                self.initialTransitionView!.frame = self.initialFrame
+                self.initialTransitionView!.alpha = 1.0
                 fromViewControllerView.alpha = CGFloat.min
                 
             }, completion: { _ in
                     
-                self.destinationTransitionView.removeFromSuperview()
-                self.initialTransitionView.removeFromSuperview()
+                self.destinationTransitionView!.removeFromSuperview()
+                self.initialTransitionView!.removeFromSuperview()
                 
                 if isNeedToControlToViewController && self.transitionController.type == .Presenting {
                     toViewControllerView.removeFromSuperview()
