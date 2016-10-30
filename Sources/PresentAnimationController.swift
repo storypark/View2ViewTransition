@@ -92,10 +92,15 @@ public final class PresentAnimationController: NSObject, UIViewControllerAnimate
         let duration: NSTimeInterval = transitionDuration(transitionContext)
         UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: usingSpringWithDamping, initialSpringVelocity: initialSpringVelocity, options: animationOptions, animations: {
             
-            initialTransitionView.frame = destinationFrame
-            initialTransitionView.alpha = 0.0
             destinationTransitionView.frame = destinationFrame
             destinationTransitionView.alpha = 1.0
+            if initialTransitionView.frame.width < destinationFrame.width &&
+                initialTransitionView.frame.height < destinationFrame.height {
+                initialTransitionView.frame = destinationFrame
+            } else {
+                initialTransitionView.center = destinationTransitionView.center
+            }
+            initialTransitionView.alpha = 0.0
             toViewControllerView.alpha = 1.0
             
         }, completion: { _ in
