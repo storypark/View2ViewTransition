@@ -30,11 +30,8 @@ public class DismissInteractiveTransition: UIPercentDrivenInteractiveTransition 
     }
     
     public func handlePanGesture(panGestureRecognizer: UIPanGestureRecognizer) {
-        guard let transitionController = transitionController,
-            animationController = animationController,
-            destinationTransitionView = animationController.destinationTransitionView,
-            initialTransitionView = animationController.initialTransitionView else { return }
-        
+        guard let transitionController = transitionController else { return }
+
         if panGestureRecognizer.state == .Began {
             
             interactionInProgress = true
@@ -49,6 +46,10 @@ public class DismissInteractiveTransition: UIPercentDrivenInteractiveTransition 
             
             return
         }
+        
+        guard let animationController = animationController,
+                  destinationTransitionView = animationController.destinationTransitionView,
+                  initialTransitionView = animationController.initialTransitionView else { return }
         
         // Get Progress
         let range: Float = Float(UIScreen.mainScreen().bounds.size.width)
