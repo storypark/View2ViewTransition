@@ -75,13 +75,13 @@ class PresentingViewController: UIViewController, UICollectionViewDelegate, UICo
             
             // Set transitionController as a navigation controller delegate and push.
             navigationController.delegate = transitionController
-            transitionController.push(viewController: presentedViewController, on: self, attached: presentedViewController)
+            transitionController.push(viewController: presentedViewController, on: self, attached: presentedViewController, panning: true)
         
         } else {
             
             // Set transitionController as a transition delegate and present.
             presentedViewController.transitioningDelegate = transitionController
-            transitionController.present(viewController: presentedViewController, on: self, attached: presentedViewController, completion: nil)
+            transitionController.present(viewController: presentedViewController, on: self, attached: presentedViewController, panning: true, completion: nil)
         }
         
         collectionView.deselectItem(at: indexPath, animated: true)
