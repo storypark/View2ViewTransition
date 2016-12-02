@@ -45,12 +45,10 @@ public final class TransitionController: NSObject {
     fileprivate(set) var presentedViewController: UIViewController!
 
     /// Type Safe Present for Swift
-    public func present<T: View2ViewTransitionPresented, U: View2ViewTransitionPresenting>(viewController presentedViewController: T, on presentingViewController: U, attached: UIViewController, panning: Bool, completion: (() -> Void)?) where T: UIViewController, U: UIViewController {
+    public func present<T: View2ViewTransitionPresented, U: View2ViewTransitionPresenting>(viewController presentedViewController: T, on presentingViewController: U, attached: UIViewController, completion: (() -> Void)?) where T: UIViewController, U: UIViewController {
         
-        if panning {
-            let pan = UIPanGestureRecognizer(target: dismissInteractiveTransition, action: #selector(dismissInteractiveTransition.handlePanGesture(_:)))
-            attached.view.addGestureRecognizer(pan)
-        }
+        let pan = UIPanGestureRecognizer(target: dismissInteractiveTransition, action: #selector(dismissInteractiveTransition.handlePanGesture(_:)))
+        attached.view.addGestureRecognizer(pan)
         
         self.presentingViewController = presentingViewController
         self.presentedViewController = presentedViewController
@@ -60,9 +58,25 @@ public final class TransitionController: NSObject {
         // Present
         presentingViewController.present(presentedViewController, animated: true, completion: completion)
     }
+        
+    @available(*, unavailable)
+    /// Present for Objective-C
+    public func present(viewController presentedViewController: UIViewController, on presentingViewController: UIViewController, attached: UIViewController, completion: (() -> Void)?) {
+    
+        let pan = UIPanGestureRecognizer(target: dismissInteractiveTransition, action: #selector(dismissInteractiveTransition.handlePanGesture(_:)))
+        attached.view.addGestureRecognizer(pan)
+        
+        self.presentingViewController = presentingViewController
+        self.presentedViewController = presentedViewController
 
+        self.type = .presenting
+        
+        // Present
+        presentingViewController.present(presentedViewController, animated: true, completion: completion)
+    }
+    
     /// Type Safe Push for Swift
-    public func push<T: View2ViewTransitionPresented, U: View2ViewTransitionPresenting>(viewController presentedViewController: T, on presentingViewController: U, attached: UIViewController, panning: Bool) where T: UIViewController, U: UIViewController {
+    public func push<T: View2ViewTransitionPresented, U: View2ViewTransitionPresenting>(viewController presentedViewController: T, on presentingViewController: U, attached: UIViewController) where T: UIViewController, U: UIViewController {
         
         guard let navigationController = presentingViewController.navigationController else {
             if self.debuging {
@@ -71,10 +85,31 @@ public final class TransitionController: NSObject {
             return
         }
         
-        if panning {
-            let pan = UIPanGestureRecognizer(target: dismissInteractiveTransition, action: #selector(dismissInteractiveTransition.handlePanGesture(_:)))
-            attached.view.addGestureRecognizer(pan)
+        let pan = UIPanGestureRecognizer(target: dismissInteractiveTransition, action: #selector(dismissInteractiveTransition.handlePanGesture(_:)))
+        attached.view.addGestureRecognizer(pan)
+        
+        self.presentingViewController = presentingViewController
+        self.presentedViewController = presentedViewController
+        
+        self.type = .pushing
+        
+        // Push
+        navigationController.pushViewController(presentedViewController, animated: true)
+    }
+    
+    @available(*, unavailable)
+    /// Push for Objective-C
+    public func push(viewController presentedViewController: UIViewController, on presentingViewController: UIViewController, attached: UIViewController) {
+        
+        guard let navigationController = presentingViewController.navigationController else {
+            if self.debuging {
+                debugPrint("View2ViewTransition << Cannot Find Navigation Controller for Presenting View Controller")
+            }
+            return
         }
+        
+        let pan = UIPanGestureRecognizer(target: dismissInteractiveTransition, action: #selector(dismissInteractiveTransition.handlePanGesture(_:)))
+        attached.view.addGestureRecognizer(pan)
         
         self.presentingViewController = presentingViewController
         self.presentedViewController = presentedViewController
