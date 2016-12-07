@@ -73,6 +73,20 @@ public final class DismissAnimationController: NSObject, UIViewControllerAnimate
         
         let containerView = transitionContext.containerView()
         
+        // Add To,FromViewController's View
+        let toViewControllerView: UIView = (toViewController as! UIViewController).view
+        toViewControllerView.frame = transitionContext.finalFrameForViewController(toViewController as! UIViewController)
+        toViewControllerView.layoutIfNeeded()
+        let fromViewControllerView: UIView = (fromViewController as! UIViewController).view
+        containerView.addSubview(fromViewControllerView)
+        
+        // This condition is to prevent getting white screen at dismissing when multiple view controller are presented.
+        let isNeedToControlToViewController: Bool = toViewControllerView.superview == nil
+        if isNeedToControlToViewController {
+            containerView.addSubview(toViewControllerView)
+            containerView.sendSubviewToBack(toViewControllerView)
+        }
+        
         fromViewController.prepareDestinationView(transitionController.userInfo, isPresenting: false)
         destinationView = fromViewController.destinationView(transitionController.userInfo, isPresenting: false)
         destinationFrame = fromViewController.destinationFrame(transitionController.userInfo, isPresenting: false)
@@ -93,18 +107,6 @@ public final class DismissAnimationController: NSObject, UIViewControllerAnimate
         // Hide Transisioning Views
         initialView.hidden = true
         destinationView.hidden = true
-        
-        // Add To,FromViewController's View
-        let toViewControllerView: UIView = (toViewController as! UIViewController).view
-        let fromViewControllerView: UIView = (fromViewController as! UIViewController).view
-        containerView.addSubview(fromViewControllerView)
-        
-        // This condition is to prevent getting white screen at dismissing when multiple view controller are presented.
-        let isNeedToControlToViewController: Bool = toViewControllerView.superview == nil
-        if isNeedToControlToViewController {
-            containerView.addSubview(toViewControllerView)
-            containerView.sendSubviewToBack(toViewControllerView)
-        }
         
         // Add Snapshot
         destinationTransitionView.frame = destinationFrame
