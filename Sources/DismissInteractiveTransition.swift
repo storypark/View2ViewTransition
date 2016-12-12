@@ -8,92 +8,92 @@
 
 import UIKit
 
-public class DismissInteractiveTransition: UIPercentDrivenInteractiveTransition {
+open class DismissInteractiveTransition: UIPercentDrivenInteractiveTransition {
     
     // MARK: Elements
     
-    public var interactionInProgress: Bool = false
+    open var interactionInProgress: Bool = false
     
-    public weak var transitionController: TransitionController?
+    open weak var transitionController: TransitionController?
     
-    public weak var animationController: DismissAnimationController?
+    open weak var animationController: DismissAnimationController?
     
-    public var initialPanPoint: CGPoint! = CGPoint.zero
+    open var initialPanPoint: CGPoint! = CGPoint.zero
     
-    private(set) var transitionContext: UIViewControllerContextTransitioning!
+    fileprivate(set) var transitionContext: UIViewControllerContextTransitioning!
     
     // MARK: Gesture
     
-    public override func startInteractiveTransition(transitionContext: UIViewControllerContextTransitioning) {
+    open override func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning) {
         self.transitionContext = transitionContext
         super.startInteractiveTransition(transitionContext)
     }
     
-    public func handlePanGesture(panGestureRecognizer: UIPanGestureRecognizer) {
+    open func handlePanGesture(recognizer panGestureRecognizer: UIPanGestureRecognizer) {
         guard let transitionController = transitionController else { return }
 
-        if panGestureRecognizer.state == .Began {
+        if panGestureRecognizer.state == .began {
             
             interactionInProgress = true
-            initialPanPoint = panGestureRecognizer.locationInView(panGestureRecognizer.view)
+            initialPanPoint = panGestureRecognizer.location(in: panGestureRecognizer.view)
             
             switch transitionController.type {
-            case .Presenting:
-                transitionController.presentedViewController.dismissViewControllerAnimated(true, completion: nil)
-            case .Pushing:
-                transitionController.presentedViewController.navigationController!.popViewControllerAnimated(true)
+            case .presenting:
+                transitionController.presentedViewController.dismiss(animated: true, completion: nil)
+            case .pushing:
+                transitionController.presentedViewController.navigationController!.popViewController(animated: true)
             }
             
             return
         }
         
         guard let animationController = animationController,
-                  destinationTransitionView = animationController.destinationTransitionView,
-                  initialTransitionView = animationController.initialTransitionView else { return }
+                  let destinationTransitionView = animationController.destinationTransitionView,
+                  let initialTransitionView = animationController.initialTransitionView else { return }
         
         // Get Progress
-        let range: Float = Float(UIScreen.mainScreen().bounds.size.width)
-        let location: CGPoint = panGestureRecognizer.locationInView(panGestureRecognizer.view)
+        let range: Float = Float(UIScreen.main.bounds.size.width)
+        let location: CGPoint = panGestureRecognizer.location(in: panGestureRecognizer.view)
         let distance: Float = sqrt(powf(Float(initialPanPoint.x - location.x), 2.0) + powf(Float(initialPanPoint.y - location.y), 2.0))
         let progress: CGFloat = CGFloat(fminf(fmaxf((distance / range), 0.0), 1.0))
         
         // Get Translation
-        let translation: CGPoint = panGestureRecognizer.translationInView(panGestureRecognizer.view)
+        let translation: CGPoint = panGestureRecognizer.translation(in: panGestureRecognizer.view)
         
         switch panGestureRecognizer.state {
             
-        case .Changed:
+        case .changed:
             
-            updateInteractiveTransition(progress)
+            update(progress)
             
             destinationTransitionView.alpha = 1.0
             initialTransitionView.alpha = 0.0
             
             // Affine Transform
             let scale: CGFloat = (1000.0 - CGFloat(distance))/1000.0
-            var transform = CGAffineTransformIdentity
+            var transform = CGAffineTransform.identity
             //            transform = CGAffineTransformScale(transform, scale, scale)
-            transform = CGAffineTransformTranslate(transform, translation.x/scale, translation.y/scale)
+            transform = transform.translatedBy(x: translation.x/scale, y: translation.y/scale)
             
             destinationTransitionView.transform = transform
             initialTransitionView.transform = transform
             
-        case .Cancelled:
+        case .cancelled:
             
             interactionInProgress = false
             transitionContext.cancelInteractiveTransition()
             
-        case .Ended:
+        case .ended:
             
             interactionInProgress = false
-            panGestureRecognizer.setTranslation(CGPoint.zero, inView: panGestureRecognizer.view)
+            panGestureRecognizer.setTranslation(CGPoint.zero, in: panGestureRecognizer.view)
             
             if progress < 0.2 {
                 
-                cancelInteractiveTransition()
+                cancel()
                 
                 let duration: Double = Double(self.duration)*Double(progress)
-                UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .CurveEaseInOut, animations: {
+                UIView.animate(withDuration: duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: UIViewAnimationOptions(), animations: {
                     
                     destinationTransitionView.frame = animationController.destinationFrame
                     initialTransitionView.frame = animationController.destinationFrame
@@ -104,8 +104,8 @@ public class DismissInteractiveTransition: UIPercentDrivenInteractiveTransition 
                         destinationTransitionView.removeFromSuperview()
                         initialTransitionView.removeFromSuperview()
                         
-                        animationController.destinationView.hidden = false
-                        animationController.initialView.hidden = false
+                        animationController.destinationView.isHidden = false
+                        animationController.initialView.isHidden = false
 //                    transitionController.presentingViewController.view.removeFromSuperview()
                         
                         self.transitionContext.completeTransition(false)
@@ -113,11 +113,11 @@ public class DismissInteractiveTransition: UIPercentDrivenInteractiveTransition 
                 
             } else {
                 
-                finishInteractiveTransition()
-                transitionController.presentingViewController.view.userInteractionEnabled = false
+                finish()
+                transitionController.presentingViewController.view.isUserInteractionEnabled = false
                 
                 let duration: Double = animationController.transitionDuration
-                UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.0, options: .CurveEaseInOut, animations: {
+                UIView.animate(withDuration: duration, delay: 0.0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.0, options: UIViewAnimationOptions(), animations: {
                     
                     destinationTransitionView.alpha = 0.0
                     initialTransitionView.alpha = 1.0
@@ -127,17 +127,17 @@ public class DismissInteractiveTransition: UIPercentDrivenInteractiveTransition 
                     
                     }, completion: { _ in
                         
-                        if transitionController.type == .Pushing {
+                        if transitionController.type == .pushing {
                             
                             destinationTransitionView.removeFromSuperview()
                             initialTransitionView.removeFromSuperview()
                             
-                            animationController.initialView.hidden = false
-                            animationController.destinationView.hidden = false
+                            animationController.initialView.isHidden = false
+                            animationController.destinationView.isHidden = false
                         }
                         
-                        transitionController.presentingViewController.view.userInteractionEnabled = true
-                        animationController.initialView.hidden = false
+                        transitionController.presentingViewController.view.isUserInteractionEnabled = true
+                        animationController.initialView.isHidden = false
                         self.transitionContext.completeTransition(true)
                 })
             }

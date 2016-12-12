@@ -9,7 +9,7 @@
 import UIKit
 
 /// Protocol for Presenting View Controller
-@objc public protocol View2ViewTransitionPresenting {
+public protocol View2ViewTransitionPresenting {
     
     /// Return initial transition view frame in window.
     /// - parameter userInfo: user info
@@ -32,7 +32,7 @@ extension View2ViewTransitionPresenting {
 }
 
 /// Protocol for Presented View Controller
-@objc public protocol View2ViewTransitionPresented {
+public protocol View2ViewTransitionPresented {
     
     /// Return destination transition view frame in window.
     /// - parameter userInfo: user info
