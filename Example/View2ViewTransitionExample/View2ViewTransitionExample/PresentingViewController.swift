@@ -126,7 +126,7 @@ class PresentingViewController: UIViewController, UICollectionViewDelegate, UICo
 
 extension PresentingViewController: View2ViewTransitionPresenting {
     
-    func initialFrame(userInfo: [String: AnyObject]?, isPresenting: Bool) -> CGRect {
+    func initialFrame(userInfo: [String: Any]?, isPresenting: Bool) -> CGRect {
         
         guard let indexPath: IndexPath = userInfo?["initialIndexPath"] as? IndexPath, let attributes: UICollectionViewLayoutAttributes = self.collectionView.layoutAttributesForItem(at: indexPath) else {
             return CGRect.zero
@@ -134,7 +134,7 @@ extension PresentingViewController: View2ViewTransitionPresenting {
         return self.collectionView.convert(attributes.frame, to: self.collectionView.superview)
     }
     
-    func initialView(userInfo: [String: AnyObject]?, isPresenting: Bool) -> UIView {
+    func initialView(userInfo: [String: Any]?, isPresenting: Bool) -> UIView {
         
         let indexPath: IndexPath = userInfo!["initialIndexPath"] as! IndexPath
         let cell: UICollectionViewCell = self.collectionView.cellForItem(at: indexPath)!
@@ -142,7 +142,7 @@ extension PresentingViewController: View2ViewTransitionPresenting {
         return cell.contentView
     }
     
-    func prepareInitialView(_ userInfo: [String : AnyObject]?, isPresenting: Bool) {
+    func prepareInitialView(_ userInfo: [String : Any]?, isPresenting: Bool) {
         
         let indexPath: IndexPath = userInfo!["initialIndexPath"] as! IndexPath
         

@@ -134,21 +134,21 @@ class PresentedViewController: UIViewController, UICollectionViewDelegate, UICol
 
 extension PresentedViewController: View2ViewTransitionPresented {
     
-    func destinationFrame(userInfo: [String: AnyObject]?, isPresenting: Bool) -> CGRect {
+    func destinationFrame(userInfo: [String: Any]?, isPresenting: Bool) -> CGRect {
         
         let indexPath: IndexPath = userInfo!["destinationIndexPath"] as! IndexPath
         let cell: PresentedCollectionViewCell = self.collectionView.cellForItem(at: indexPath) as! PresentedCollectionViewCell
         return cell.content.frame
     }
     
-    func destinationView(userInfo: [String: AnyObject]?, isPresenting: Bool) -> UIView {
+    func destinationView(userInfo: [String: Any]?, isPresenting: Bool) -> UIView {
         
         let indexPath: IndexPath = userInfo!["destinationIndexPath"] as! IndexPath
         let cell: PresentedCollectionViewCell = self.collectionView.cellForItem(at: indexPath) as! PresentedCollectionViewCell
         return cell.content
     }
     
-    func prepareDestinationView(userInfo: [String: AnyObject]?, isPresenting: Bool) {
+    func prepareDestinationView(userInfo: [String: Any]?, isPresenting: Bool) {
         
         if isPresenting {
             
