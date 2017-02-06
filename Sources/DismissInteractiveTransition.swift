@@ -39,17 +39,18 @@ open class DismissInteractiveTransition: UIPercentDrivenInteractiveTransition {
             
             switch transitionController.type {
             case .presenting:
-                transitionController.presentedViewController.dismiss(animated: true, completion: nil)
+                transitionController.presentedViewController?.dismiss(animated: true, completion: nil)
             case .pushing:
-                transitionController.presentedViewController.navigationController!.popViewController(animated: true)
+                transitionController.presentedViewController?.navigationController!.popViewController(animated: true)
             }
             
             return
         }
         
         guard let animationController = animationController,
-                  let destinationTransitionView = animationController.destinationTransitionView,
-                  let initialTransitionView = animationController.initialTransitionView else { return }
+              let presentingViewController = transitionController.presentingViewController,
+              let destinationTransitionView = animationController.destinationTransitionView,
+              let initialTransitionView = animationController.initialTransitionView else { return }
         
         // Get Progress
         let range: Float = Float(UIScreen.main.bounds.size.width)
@@ -114,7 +115,7 @@ open class DismissInteractiveTransition: UIPercentDrivenInteractiveTransition {
             } else {
                 
                 finish()
-                transitionController.presentingViewController.view.isUserInteractionEnabled = false
+                presentingViewController.view.isUserInteractionEnabled = false
                 
                 let duration: Double = animationController.transitionDuration
                 UIView.animate(withDuration: duration, delay: 0.0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.0, options: UIViewAnimationOptions(), animations: {
@@ -136,7 +137,7 @@ open class DismissInteractiveTransition: UIPercentDrivenInteractiveTransition {
                             animationController.destinationView.isHidden = false
                         }
                         
-                        transitionController.presentingViewController.view.isUserInteractionEnabled = true
+                        presentingViewController.view.isUserInteractionEnabled = true
                         animationController.initialView.isHidden = false
                         self.transitionContext.completeTransition(true)
                 })
